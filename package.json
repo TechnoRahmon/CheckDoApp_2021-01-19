@@ -1,0 +1,25 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "This project is about to make a dynamic portfolio that it represente our :  (skills, experience, education, certifications)add we can add new project dynamicly without edit our code.",
+  "main": "index.js",
+  "dependencies": {
+    "concurrently": "^5.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "client": "npm start --prefix client",
+    "Backend": "npm start --prefix Backend",
+    "start": "concurrently \"npm run client\" \"npm run Backend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TechnoRahmon/Portfolio-2020-11-26.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TechnoRahmon/Portfolio-2020-11-26/issues"
+  },
+  "homepage": "https://github.com/TechnoRahmon/Portfolio-2020-11-26#readme"
+}
