@@ -1,11 +1,34 @@
 const Mission = require('../Models/missionsModel');
+const User = require('./userController')
+const {  validationResult } = require('express-validator')
+
+
+
+
+
+
+
+
+//********** validation Resault ************
+
+function getValidationResualt(req){
+  const error = validationResult(req)
+  if(!error.isEmpty())
+      return error.array() 
+  return false
+}
+
+
+
 
 // @Desc Get all Missions for singal user
 // @Route /api/v2/user/userId/missions
+// @access privat only for account owner 
+
 exports.getMissions = async (req, res) => {
   try {
-    const { userId }  = req.body
-    const missions = await Mission.find({ userId : userId })
+    const { userId }  = req.params
+    const missions = await Mission.find({ userId : userId }).populate('userId' , 'username')
     if ( !missions.length ) return res.status(404).json({ success:false, err: 'NO Missions Found'})
 
     return res.status(200).json({
@@ -21,51 +44,58 @@ exports.getMissions = async (req, res) => {
   }
 };
 
-// @des add new post
+
+// @des add new mission
+// @Route /api/v2/user/userId/missions
+// @access privat only for account owner 
 
 exports.new = async(req, res)=>{
     try {
-      console.log("reqBody: ",req.body)
-        const Mission = new Mission();
-        Mission.title = req.body.title;
-        Mission.content = req.body.content;
-        await Mission.save();
+        const errors = getValidationResualt(req); 
+        if ( errors ) return res.status(400).json({ success:false , msg:errors[0].msg })
+         
+        const { userId } = req.params
+        const { name , description } = req.body; 
+         
+        const mission = new Mission();
+        mission.userId = userId;
+        mission.name = name;
+        mission.description = description; 
+        await mission.save();
 
-        return res.status(201).json({
-            success: true,
-            data: Mission
-        })
+        return res.status(201).json({  success: true, data: mission  })
+
     } catch (error) {
+      if(error)console.log(`${error}`.red.bold);
         res.status(500).json({
             success: false,
-            err: error.message
+            err:'Server Error : '+error
         })
     }
 }
 
 
-//@des View artcle
+//@des View single mission
+// @Route /api/v2/user/userId/mission/missionId 
+// @access privat only for account owner 
+
 exports.view = async (req, res) => {
   try {
-    const Mission = await Mission.findById(req.params.Mission_id);
+    const { userId , missionId  } = req.params ; 
 
-    if (!Mission) {
-      console.log("error 404, prjocet not found".red);
-      return res.status(404).json({
-        success: false,
-        err: "Mission is not found",
-      });
-    }
+    const mission = await Mission.find({ _id : missionId, userId :userId }).populate('userId' ,' username')
 
-    return res.status(200).json({
-      success: true,
-      data: Mission,
-    });
+    if (!mission.length)return res.status(404).json({ success: false,  err: "Mission is not found", });
+    
+
+    return res.status(200).json({ success: true,  data: mission  });
+    
   } catch (error) {
     // Error condtion
+    
      return res.status(500).json({
       success: false,
-      err: "Server error: " + error.message,
+      err: "Server error: " +error,
     });
   }
 };

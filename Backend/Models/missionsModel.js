@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const missoinSchma = new mongoose.Schema({
-    userId : { type: mongoose.Schema.Types.ObjectId, ref: 'Users'  },
+    userId : { type: mongoose.Schema.Types.ObjectId, ref: 'Users',  required : true },
     name :{type: String, required: true},
     description : { type:String, required: true },
 

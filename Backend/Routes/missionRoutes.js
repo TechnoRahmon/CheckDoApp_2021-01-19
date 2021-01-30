@@ -4,10 +4,10 @@ const {missionValidator} = require('../middleware/missionValidator')
 
  Router.route("/user/:userId/missions")
     .get(missionController.getMissions)
-    //.post(missionController.new);
+    .post(missionValidator ,missionController.new);
 
-// Router.route("/article/:article_id")
-//   .get(missionController.view)
+ Router.route("/user/:userId/mission/:missionId")
+    .get(missionController.view)
 //   .delete(missionController.delete);
 
 module.exports = Router;
