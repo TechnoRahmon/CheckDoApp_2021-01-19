@@ -14,8 +14,6 @@ const {  validationResult } = require('express-validator')
             return false
  }
 
-
-
 //********** is email exist ************
 async function isEmailExist(email){
         const user =await Users.find({ email : email})
@@ -39,7 +37,7 @@ async function isPwdsMatched(oldPwd , newPwd ){
 exports.isTokenValid = async(req,res,next)=>{
         try{
             const token =  req.header('x-auth-token');
-            console.log('token from controller : '.green ,token,'*'.green);
+            // console.log('token from controller : '.green ,token,'*'.green);
             if (!token) return res.status(401).json(false)
 
             const verified = jwt.verify(token , process.env.TOKEN)
@@ -102,7 +100,6 @@ exports.addUserDetails = async (req, res ,next)=>{
 }
 
 //********** login **********
-
 //@des login User
 //@route Get api/v1/login
 //@accesss Public
@@ -118,16 +115,16 @@ exports.userLogin = async (req, res ,next)=>{
 
         //check the eamil 
         const user =await isEmailExist(email) ;
-        console.log(user);
+        //console.log(user);
         if ( !user.length ) return res.status(400).json({ success:false , msg:'This Email is Not registered'})
 
         // is the passwords matched  (new pwd , old pwd )
         const isMatched = await isPwdsMatched(password, user[0].password ); 
-        console.log('matcheing pwd' ,isMatched);
+        //console.log('matcheing pwd' ,isMatched);
         if ( !isMatched )return res.status(400).json({ success:false , msg:'The Password is Not Correct'})
 
         //generate token 
-        const token = jwt.sign({id : user[0]._id.toString() }, process.env.TOKEN , { algorithm:"HS256"} )
+        const token = jwt.sign({userId: user[0]._id.toString() }, process.env.TOKEN , { algorithm:"HS256"} )
          
         
         return res.status(200).json({ success:true ,token, user:{username:user[0].username }})

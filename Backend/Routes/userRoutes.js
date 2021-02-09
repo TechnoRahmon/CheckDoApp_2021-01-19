@@ -7,11 +7,10 @@ Router
     .route('/user')
         .post( addUserValidator ,UserController.addUserDetails)
 
-
 Router 
     .route('/login')
         .post(UserController.userLogin)
-
+        
 Router 
     .route('/valid')
         .post(UserController.isTokenValid)

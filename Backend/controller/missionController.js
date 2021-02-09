@@ -27,7 +27,7 @@ function getValidationResualt(req){
 
 exports.getMissions = async (req, res) => {
   try {
-    const { userId }  = req.params
+    const userId = req.user._id
     const missions = await Mission.find({ userId : userId }).populate('userId' , 'username')
     if ( !missions.length ) return res.status(404).json({ success:false, err: 'NO Missions Found'})
 
@@ -106,7 +106,7 @@ exports.view = async (req, res) => {
 // @des delete  Mission
 exports.delete = async function (req, res) {
   try {
-    const Mission = await Mission.findById(req.params.Mission_id);
+    const mission = await Mission.findById(req.params.Mission_id);
     if (!Mission) {
       return res.status(404).json({
         success: false,
