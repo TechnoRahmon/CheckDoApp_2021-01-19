@@ -10,7 +10,11 @@ Router
 Router 
     .route('/login')
         .post(UserController.userLogin)
-        
+Router 
+    .route('/logout')
+        .get(UserController.logout)    
+
+
 Router 
     .route('/valid')
         .post(UserController.isTokenValid)

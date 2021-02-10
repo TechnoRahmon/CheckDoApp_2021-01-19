@@ -133,3 +133,12 @@ exports.userLogin = async (req, res ,next)=>{
         return res.status(500).json({ success:false, error : 'Server Error : '+err})
     }
 }
+
+exports.logout =  async (req,res,next)=>{
+    try {
+        res.cookie('token','');
+        return res.status(200).json({success:true, msg:'User logged out successfully'})
+    } catch (error) {
+        return res.status(500).json({success:false, error:'Server Error'+error})
+    }
+}

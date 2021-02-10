@@ -7,6 +7,7 @@ module.exports.connectDB =  async ()=>{
             useCreateIndex:true, 
             useUnifiedTopology:true,
             useNewUrlParser:true,
+            useFindAndModify:false,
         })
 
         console.log(`MongoDB connected at ${conn.connection.host}`.cyan.underline.bold);
