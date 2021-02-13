@@ -6,17 +6,24 @@ const {  validationResult } = require('express-validator')
 /************** calculate the final total for the mission :function */
 
 const get_final_total = (log)=>{
-  console.log(log);
+  //console.log(log);
       let total={days:0,hours:0,minutes:0};
       log.forEach(element => {   
-        //console.log(total); 
-          total.days += element.total.days;
-          total.hours += element.total.hours;
-          total.minutes += element.total.minutes;
+          //console.log(typeof(element.total.days));
+          if(element.total.days>= 0){ 
+           
+            total.days += element.total.days;
+            total.hours += element.total.hours;
+            total.minutes += element.total.minutes;
+            console.log('total:',total); 
+          }
+
       });
       return total
 }
 /********************************************** */
+
+
 
 
 
@@ -26,23 +33,23 @@ const get_time_diffrance= (in_date , out_date)=>{
       const date1= new Date(out_date)
       let  diffrance_days,diffrace_hours,diffrance_minutes = 0;
 
-      console.log(date2, date1);
+      //console.log(date2, date1);
       // get the milisecondes diffrance.
       const diffrance_time = date1.getTime()-date2.getTime();
 
       //calculate the days
       diffrance_days= Math.floor(diffrance_time / (1000*3600*24)) ;
-      console.log('days:'+diffrance_days);
+      //console.log('days:'+diffrance_days);
 
       //calculate the hours
       if ((diffrance_time / (1000*3600*24)) - diffrance_days > 0 )
         diffrace_hours = ((diffrance_time / (1000*3600*24)) - diffrance_days)*24
-      console.log('hours :'+Math.floor(diffrace_hours));
+      //console.log('hours :'+Math.floor(diffrace_hours));
 
       //calculate the minutes
     if (diffrace_hours -Math.floor(diffrace_hours)  > 0 )
         diffrance_minutes = Math.round((diffrace_hours -Math.floor(diffrace_hours))*60)
-    console.log('minutes :'+Math.round(diffrance_minutes));
+    //console.log('minutes :'+Math.round(diffrance_minutes));
 
 
     return { days:diffrance_days , hours:diffrance_days , minutes: diffrance_minutes}
@@ -237,10 +244,19 @@ exports.endAction = async (req,res,next)=>{
           const Total= get_time_diffrance(startPoint,endPoint);
           //console.log(`The total :`,Total );
         //***********/
+        
+        //calculate the final total
+        const Total_logs = get_final_total([...mission.mission_log,{total:Total}])
+        console.log('Total_logs',Total_logs);
+
         mission.mission_log[mission.mission_log.length-1].total.days = Total.days;
         mission.mission_log[mission.mission_log.length-1].total.hours = Total.hours;
         mission.mission_log[mission.mission_log.length-1].total.minutes = Total.minutes;
         mission.mission_log[mission.mission_log.length-1].out = endPoint;
+        mission.total_logs.days=Total_logs.days;
+        mission.total_logs.hours=Total_logs.hours;
+        mission.total_logs.minutes=Total_logs.minutes;
+
          await mission.save();
    
         //push the start time into Mission_log
