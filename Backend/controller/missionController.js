@@ -5,9 +5,19 @@ const {  validationResult } = require('express-validator')
 
 
 
+/************* get Times diffrace function ********************* */
+const get_time_diffrance= (date)=>{
+  const date2= new Date('02/8/2021')
+  const date1= new Date('02/10/2021 15:30:01')
+  let  diffrance_days,diffrace_hours,diffrance_minutes = 0;
+  // get the milisecondes diffrance.
+  const diffrance_time = date1.getTime()-date2.getTime();
 
-
-
+  
+ console.log(diffrance_time / (1000*3600));
+  console.log((diffrance_time / (1000*3600)) - Math.floor(diffrance_time / (1000*3600))  );
+}
+get_time_diffrance(Date.now())
 
 //********** validation Resault ************
 
@@ -191,7 +201,8 @@ exports.endAction = async (req,res,next)=>{
 
 
         // calculate the total to push into mission_log!!
-
+        const startPoint = mission.mission_log[mission.mission_log.length-1].in;
+        console.log(`action start point : ${startPoint} `.yellow);
         //***********/
 
          mission.mission_log[mission.mission_log.length-1].out = Date.now();
