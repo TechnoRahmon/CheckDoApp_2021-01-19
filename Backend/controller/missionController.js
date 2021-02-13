@@ -3,21 +3,52 @@ const User = require('./userController')
 const {  validationResult } = require('express-validator')
 
 
+/************** calculate the final total for the mission :function */
+
+const get_final_total = (log)=>{
+  console.log(log);
+      let total={days:0,hours:0,minutes:0};
+      log.forEach(element => {   
+        //console.log(total); 
+          total.days += element.total.days;
+          total.hours += element.total.hours;
+          total.minutes += element.total.minutes;
+      });
+      return total
+}
+/********************************************** */
+
 
 
 /************* get Times diffrace function ********************* */
-const get_time_diffrance= (date)=>{
-  const date2= new Date('02/8/2021')
-  const date1= new Date('02/10/2021 15:30:01')
-  let  diffrance_days,diffrace_hours,diffrance_minutes = 0;
-  // get the milisecondes diffrance.
-  const diffrance_time = date1.getTime()-date2.getTime();
+const get_time_diffrance= (in_date , out_date)=>{
+      const date2= new Date(in_date)
+      const date1= new Date(out_date)
+      let  diffrance_days,diffrace_hours,diffrance_minutes = 0;
 
-  
- console.log(diffrance_time / (1000*3600));
-  console.log((diffrance_time / (1000*3600)) - Math.floor(diffrance_time / (1000*3600))  );
-}
-get_time_diffrance(Date.now())
+      console.log(date2, date1);
+      // get the milisecondes diffrance.
+      const diffrance_time = date1.getTime()-date2.getTime();
+
+      //calculate the days
+      diffrance_days= Math.floor(diffrance_time / (1000*3600*24)) ;
+      console.log('days:'+diffrance_days);
+
+      //calculate the hours
+      if ((diffrance_time / (1000*3600*24)) - diffrance_days > 0 )
+        diffrace_hours = ((diffrance_time / (1000*3600*24)) - diffrance_days)*24
+      console.log('hours :'+Math.floor(diffrace_hours));
+
+      //calculate the minutes
+    if (diffrace_hours -Math.floor(diffrace_hours)  > 0 )
+        diffrance_minutes = Math.round((diffrace_hours -Math.floor(diffrace_hours))*60)
+    console.log('minutes :'+Math.round(diffrance_minutes));
+
+
+    return { days:diffrance_days , hours:diffrance_days , minutes: diffrance_minutes}
+      //console.log(`total is: ${diffrance_days} days ${diffrance_days}h:${diffrance_minutes}m`);
+    }
+
 
 //********** validation Resault ************
 
@@ -201,11 +232,15 @@ exports.endAction = async (req,res,next)=>{
 
 
         // calculate the total to push into mission_log!!
-        const startPoint = mission.mission_log[mission.mission_log.length-1].in;
-        console.log(`action start point : ${startPoint} `.yellow);
+          const startPoint = mission.mission_log[mission.mission_log.length-1].in;
+          const endPoint = Date.now();
+          const Total= get_time_diffrance(startPoint,endPoint);
+          //console.log(`The total :`,Total );
         //***********/
-
-         mission.mission_log[mission.mission_log.length-1].out = Date.now();
+        mission.mission_log[mission.mission_log.length-1].total.days = Total.days;
+        mission.mission_log[mission.mission_log.length-1].total.hours = Total.hours;
+        mission.mission_log[mission.mission_log.length-1].total.minutes = Total.minutes;
+        mission.mission_log[mission.mission_log.length-1].out = endPoint;
          await mission.save();
    
         //push the start time into Mission_log

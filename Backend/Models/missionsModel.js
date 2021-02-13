@@ -7,10 +7,10 @@ const missoinSchma = new mongoose.Schema({
 
     mission_log :[{ in:{type : Date },
                     out : {type : Date },
-                    total: { hours :{ type: Number}, minutes : { type :Number} }  }],
+                    total: { days:{type: Number} ,hours :{ type: Number}, minutes : { type :Number} }  }],
 
     createdAt: { type: Date, default: Date.now },
-    total_logs:{ hours :{ type: Number}, minutes : { type :Number}}
+    total_logs:{ days:{type: Number}, hours :{ type: Number}, minutes : { type :Number}}
 })
 
 module.exports = mongoose.model("Missions", missoinSchma);
